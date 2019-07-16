@@ -1,0 +1,67 @@
+module Traffic (input logic clk,rst,
+					output logic[2:0]count,
+					output logic NSG,NSR,NSY,EWG,EWR,EWY);
+typedef enum logic[2:0]{S0,S1,S2,S3,S4,S5}statetype;
+statetype state,nextstate;
+
+always_ff@(posedge clk, posedge rst)
+if(rst)
+	state<=S0;
+	count<=0;	
+else
+	state<=nextstate;
+	count<=count+1;
+	
+always_comb
+case(state)
+		S0:if(count==5)
+				nextstate<=S1;
+				count<=0;
+			else
+				nextstate<=S0;
+				NSG<=1;
+				EWR<=1;
+		
+		S1:if(count==1)
+				nextstate<=S2;
+				count<=0;
+			else
+				nextstate<=S1;
+				NSY<=1;
+				EWR<=1;
+		
+		S2:if(count==1)
+				nextstate<=S3;
+				count<=0;
+			else
+				nextstate<=S2;
+				NSR<=1;
+				EWR<=1;
+				
+		S3:if(count==5)
+				nextstate<=S4;
+				count<=0;
+			else
+				nextstate<=S3;
+				NSR<=1;
+				EWG<=1;
+		
+		S4:if(count==1)
+				nextstate<=S5;
+				count<=0;
+			else
+				nextstate<=S4;
+				NSR<=1;
+				EWY<=1;
+		
+		S5:if(count==1)
+				nextstate<=S0;
+				count<=0;
+			else
+				nextstate<=S5;
+				NSR<=1;
+				EWR<=1;
+	endcase
+endmodule
+	
+				
